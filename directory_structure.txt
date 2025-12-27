@@ -1,0 +1,53 @@
+multiplayer-tictactoe/
+│
+├── README.md
+├── Makefile
+├── .gitignore
+│
+├── include/
+│   ├── common.h
+│   ├── protocol.h
+│   ├── utils.h
+│   │
+│   ├── server/
+│   │   ├── server.h
+│   │   ├── client_handler.h
+│   │   ├── game_manager.h
+│   │   ├── session_manager.h
+│   │   ├── tournament.h
+│   │   └── chat.h
+│   │
+│   └── client/
+│       ├── client.h
+│       ├── ui.h
+│       └── input.h
+│
+├── src/
+│   ├── common/
+│   │   ├── utils.c
+│   │   └── protocol.c
+│   │
+│   ├── server/
+│   │   ├── main.c
+│   │   ├── server.c
+│   │   ├── client_handler.c
+│   │   ├── game_manager.c
+│   │   ├── session_manager.c
+│   │   ├── tournament.c
+│   │   └── chat.c
+│   │
+│   └── client/
+│       ├── main.c
+│       ├── client.c
+│       ├── ui.c
+│       └── input.c
+│
+├── data/
+│   ├── match_history.log
+│   └── sessions.db
+│
+└── docs/
+    ├── protocol.md
+    ├── architecture.md
+    └── future_improvements.md
+
