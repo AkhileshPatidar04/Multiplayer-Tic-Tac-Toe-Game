@@ -2,9 +2,15 @@
 #include <string.h>
 #include <unistd.h>
 #include "server/tournament.h"
+#include "protocol.h"
+#include "utils.h"
+#include "DEBUG.h"
+
 
 static player_stats_t players[MAX_PLAYERS];
 static int player_count = 0;
+
+
 
 
 static player_stats_t* get_player(const char *name) {
@@ -68,15 +74,30 @@ void load_leaderboard() {
 }
 
 
-void print_leaderboard(int client_fd) {
-	char buffer[256];
-	send(client_fd, "--- Leaderboard ---\n", 20, 0);
-	for (int i = 0; i < player_count; i++) {
-		snprintf(buffer, sizeof(buffer), "%s | W:%d L:%d D:%d\n",
-				players[i].player_name,
-				players[i].wins,
-				players[i].losses,
-				players[i].draws);
-		send(client_fd, buffer, strlen(buffer), 0);
-	}
+
+void print_leaderboard(int client_fd)
+{
+    message_t msg;
+
+    // Header line
+    memset(&msg, 0, sizeof(msg));
+    msg.type = MSG_GAME_STATE;   // or MSG_LEADERBOARD if you add one
+    snprintf(msg.payload, sizeof(msg.payload), "--- Leaderboard ---");
+    send_message(client_fd, &msg);
+
+    // Each player entry
+    for (int i = 0; i < player_count; i++) {
+        memset(&msg, 0, sizeof(msg));
+        msg.type = MSG_GAME_STATE;
+
+        snprintf(msg.payload, sizeof(msg.payload),
+                 "%s | W:%d L:%d D:%d",
+                 players[i].player_name,
+                 players[i].wins,
+                 players[i].losses,
+                 players[i].draws);
+
+        send_message(client_fd, &msg);
+    }
 }
+

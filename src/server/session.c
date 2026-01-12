@@ -3,7 +3,8 @@
 #include <string.h>
 #include <time.h>
 #include "server/session.h"
-
+// #include "proto"
+#include "DEBUG.h"
 
 #define MAX_SESSIONS 100
 
@@ -13,18 +14,34 @@ static int session_count = 0;
 
 
 static void generate_session_id(char *buf) {
+	#ifdef DEBUG
+		printf("[DEBUG]:generating session id\n");
+	#endif
+
 	srand(time(NULL) ^ rand());
 	snprintf(buf, SESSION_ID_LEN, "%ld-%d", time(NULL), rand());
+	
+	#ifdef DEBUG
+		printf("[DEBUG]:generated session id\n");
+	#endif
 }
 
 
-void create_session(session_t *s, int client_fd, const char *player_name) {
-	s->client_fd = client_fd;
-	strncpy(s->player_name, player_name, sizeof(s->player_name));
-	generate_session_id(s->session_id);
+void create_session(int client_fd, const char *player_name) {
+	#ifdef DEBUG
+		printf("[DEBUG]:creating session\n");
+	#endif
+
+	session_t s;
+	s.client_fd = client_fd;
+	strncpy(s.player_name, player_name, sizeof(s.player_name));
+	generate_session_id(s.session_id);
 
 
-	sessions[session_count++] = *s;
+	sessions[session_count++] = s;
+	#ifdef DEBUG
+		printf("[DEBUG]:created session\n");
+	#endif
 }
 
 
@@ -44,4 +61,18 @@ const char* get_session_id(int client_fd) {
 			return sessions[i].session_id;
 	}
 	return NULL;
+}
+
+
+void broadcast_session_chat(const message_t *msg, int sender_fd) {
+
+		#ifdef DEBUG
+			printf("[DEBUG]:broadcasting chat recevied from client %d",sender_fd);
+		#endif
+		
+		for (int i = 0; i < session_count; i++) {
+				if (sessions[i].client_fd != sender_fd) {
+					send_message(sessions[i].client_fd, msg);
+			}
+	}
 }

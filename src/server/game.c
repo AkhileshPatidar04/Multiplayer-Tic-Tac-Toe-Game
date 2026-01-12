@@ -52,7 +52,7 @@ int check_winner(game_t *game) {
 	if (b[0][2] != ' ' && b[0][2] == b[1][1] && b[1][1] == b[2][0]) return 1;
 
 
-	return 0;
+	return -1;
 }
 
 
@@ -68,4 +68,11 @@ int is_draw(game_t *game) {
 void reset_game(game_t *game) {
 	memset(game->board, ' ', sizeof(game->board));
 	game->current_turn = 0;
+}
+
+
+
+int opponent(game_t *game, int client_fd)
+{
+	return (game->player_fd[0] == client_fd) ? game->player_fd[1] : game->player_fd[0]; 
 }

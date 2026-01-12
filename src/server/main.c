@@ -3,6 +3,6 @@
 
 
 int main() {
-start_server();
-return 0;
+    start_server();
+    return 0;
 }
